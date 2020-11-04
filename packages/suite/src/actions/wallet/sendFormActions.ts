@@ -47,22 +47,34 @@ export type SendFormAction =
           type: typeof SEND.DISPOSE;
       };
 
-export const saveDraft = (formState: FormState) => (dispatch: Dispatch, getState: GetState) => {
-    const { selectedAccount } = getState().wallet;
-    if (selectedAccount.status !== 'loaded') return null;
+export const saveDraft = (formState: FormState, accountKey?: string) => (
+    dispatch: Dispatch,
+    getState: GetState,
+) => {
+    if (!accountKey) {
+        const { selectedAccount } = getState().wallet;
+        if (selectedAccount.status !== 'loaded') return null;
+
+        accountKey = selectedAccount.account.key;
+    }
 
     dispatch({
         type: SEND.STORE_DRAFT,
-        key: selectedAccount.account.key,
+        key: accountKey,
         formState,
     });
 };
 
-export const getDraft = () => (_dispatch: Dispatch, getState: GetState) => {
-    const { selectedAccount, send } = getState().wallet;
-    if (selectedAccount.status !== 'loaded') return;
+export const getDraft = (accountKey?: string) => (_dispatch: Dispatch, getState: GetState) => {
+    if (!accountKey) {
+        const { selectedAccount } = getState().wallet;
+        if (selectedAccount.status !== 'loaded') return;
 
-    const draft = send.drafts[selectedAccount.account.key];
+        accountKey = selectedAccount.account.key;
+    }
+
+    const { send } = getState().wallet;
+    const draft = send.drafts[accountKey];
     if (draft) {
         // draft is a read-only redux object. make a copy to be able to modify values
         return JSON.parse(JSON.stringify(draft));

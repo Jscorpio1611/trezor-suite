@@ -1,3 +1,7 @@
+import { app } from 'electron';
+
+const logUI = app.commandLine.hasSwitch('log-ui');
+
 const init = ({ mainWindow }: Dependencies) => {
     const { logger } = global;
 
@@ -41,19 +45,24 @@ const init = ({ mainWindow }: Dependencies) => {
     });
 
     mainWindow.webContents.on('console-message', (_, level, message, line, sourceId) => {
+        if (!logUI) {
+            return;
+        }
+
         const msg = `${message} - ${sourceId}:${line}`;
         switch (level) {
             case 0:
-                logger.debug('console-log', msg);
+                logger.debug('ui-log', msg);
                 break;
             case 1:
-                logger.info('console-log', msg);
+                // Infos are still very verbose
+                logger.debug('ui-log', msg);
                 break;
             case 2:
-                logger.warn('console-log', msg);
+                logger.warn('ui-log', msg);
                 break;
             case 3:
-                logger.error('console-log', msg);
+                logger.error('ui-log', msg);
                 break;
             // no default
         }

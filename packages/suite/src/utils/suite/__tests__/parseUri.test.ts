@@ -1,4 +1,4 @@
-import { parseUri } from '@suite-utils/parseUri';
+import { parseUri, getProtocolInfo } from '@suite-utils/parseUri';
 
 describe('parseUri', () => {
     describe('parsedUri', () => {
@@ -38,6 +38,50 @@ describe('parseUri', () => {
             const parsedEmptyUri = parseUri('');
             expect(parsedEmptyUri).toEqual({
                 address: '',
+            });
+        });
+    });
+
+    // Tests moved from another file (duplicate)
+    describe('parseUri multi', () => {
+        it('should work with any type of URIs', () => {
+            expect(parseUri('http://www.trezor.io')).toEqual({
+                address: '//www.trezor.io',
+            });
+            expect(parseUri('www.trezor.io')).toEqual({
+                address: 'www.trezor.io',
+            });
+            expect(parseUri('www.trezor.io/route')).toEqual({
+                address: 'www.trezor.io/route',
+            });
+            expect(parseUri('www.trezor.io/route?query=1&odd')).toEqual({
+                address: 'www.trezor.io/route',
+                query: '1',
+            });
+            expect(parseUri('www.trezor.io?query=1&amount=1')).toEqual({
+                address: 'www.trezor.io',
+                query: '1',
+                amount: '1',
+            });
+        });
+    });
+
+    describe('getProtocolInfo', () => {
+        it('should work with trezorsuite URI', () => {
+            const { action, payload } = getProtocolInfo('trezorsuite:test?param1=a&param2=b');
+            expect(action).toEqual('test');
+            expect(payload).toEqual({ param1: 'a', param2: 'b' });
+        });
+
+        it('should work with bitcoin URI', () => {
+            const { action, payload } = getProtocolInfo(
+                'bitcoin:3QmuBaZrJNCxc5Xs7aGzZUK8RirUT8jRKf?amount=0.1',
+            );
+            expect(action).toEqual('accounts/send');
+            expect(payload).toEqual({
+                coin: 'bitcoin',
+                amount: '0.1',
+                address: '3QmuBaZrJNCxc5Xs7aGzZUK8RirUT8jRKf',
             });
         });
     });

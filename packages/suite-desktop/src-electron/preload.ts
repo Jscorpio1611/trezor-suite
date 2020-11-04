@@ -31,6 +31,9 @@ const validChannels = [
 
     // tor
     'tor/status',
+
+    // custom protocol
+    'protocol/open',
 ];
 
 contextBridge.exposeInMainWorld('desktopApi', {

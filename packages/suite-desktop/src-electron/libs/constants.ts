@@ -6,6 +6,7 @@ export const MODULES = [
     { name: 'event-logging/app', dependencies: [] },
     { name: 'event-logging/contents', dependencies: ['mainWindow'] },
     // Standard modules
+    { name: 'hang-detect', dependencies: ['mainWindow'] },
     { name: 'menu', dependencies: ['mainWindow'] },
     { name: 'shortcuts', dependencies: ['mainWindow', 'src'] },
     { name: 'request-filter', dependencies: ['mainWindow'] },
@@ -16,6 +17,7 @@ export const MODULES = [
     { name: 'bridge', dependencies: [] },
     { name: 'tor', dependencies: ['mainWindow', 'store'] },
     { name: 'analytics', dependencies: [] },
+    { name: 'custom-protocols', dependencies: ['mainWindow'] },
     // Prod Only
     { name: 'csp', dependencies: ['mainWindow'], isDev: false },
     { name: 'file-protocol', dependencies: ['mainWindow', 'src'], isDev: false },

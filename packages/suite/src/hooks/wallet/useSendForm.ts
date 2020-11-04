@@ -3,7 +3,6 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { useActions } from '@suite-hooks';
 import * as sendFormActions from '@wallet-actions/sendFormActions';
 import * as walletSettingsActions from '@settings-actions/walletSettingsActions';
-import { DEFAULT_PAYMENT, DEFAULT_VALUES } from '@wallet-constants/sendForm';
 import {
     UseSendFormProps,
     UseSendFormState,
@@ -13,7 +12,7 @@ import {
 } from '@wallet-types/sendForm';
 // import { isEnabled as isFeatureEnabled } from '@suite-utils/features';
 
-import { getFeeLevels } from '@wallet-utils/sendFormUtils';
+import { getFeeLevels, getDefaultValues } from '@wallet-utils/sendFormUtils';
 import { useSendFormOutputs } from './useSendFormOutputs';
 import { useSendFormFields } from './useSendFormFields';
 import { useSendFormCompose } from './useSendFormCompose';
@@ -21,22 +20,6 @@ import { useSendFormImport } from './useSendFormImport';
 
 export const SendContext = createContext<SendContextValues | null>(null);
 SendContext.displayName = 'SendContext';
-
-const getDefaultValues = (
-    currency: Output['currency'],
-    _network: UseSendFormState['network'],
-): FormState => {
-    return {
-        ...DEFAULT_VALUES,
-        // TEMP: rbf option is disabled by default
-        // options:
-        //     isFeatureEnabled('RBF') && network.features?.includes('rbf')
-        //         ? ['bitcoinRBF', 'broadcast']
-        //         : ['broadcast'],
-        options: ['broadcast'],
-        outputs: [{ ...DEFAULT_PAYMENT, currency }],
-    };
-};
 
 // convert UseSendFormProps to UseSendFormState
 const getStateFromProps = (props: UseSendFormProps) => {
@@ -120,12 +103,12 @@ export const useSendForm = (props: UseSendFormProps): SendContextValues => {
                 }
             }
             return {
-                ...getDefaultValues(localCurrencyOption, state.network),
+                ...getDefaultValues(localCurrencyOption),
                 ...loadedState,
                 ...feeEnhancement,
             };
         },
-        [getLastUsedFeeLevel, localCurrencyOption, state.network],
+        [getLastUsedFeeLevel, localCurrencyOption],
     );
 
     // update custom values

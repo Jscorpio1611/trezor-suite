@@ -15,6 +15,7 @@ import ErrorBoundary from '@suite-support/ErrorBoundary';
 import DesktopUpdater from '@desktop/support/DesktopUpdater';
 import { SENTRY_CONFIG } from '@suite-config';
 import Resize from '@suite-support/Resize';
+import Protocol from '@suite-support/Protocol';
 import ThemeProvider from '@suite-support/ThemeProvider';
 import GlobalStyles from '@suite-support/styles/global';
 import { isDev } from '@suite-utils/build';
@@ -56,6 +57,7 @@ class TrezorSuiteApp extends App<Props> {
                         <ErrorBoundary>
                             <Resize />
                             <Tor />
+                            <Protocol />
                             <OnlineStatus />
                             <IntlProvider>
                                 <DesktopUpdater setIsUpdateVisible={this.setIsUpdateVisible} />

@@ -4,14 +4,20 @@ import { EthereumTransaction, TokenInfo, ComposeOutput } from 'trezor-connect';
 import Common from 'ethereumjs-common';
 import { Transaction, TxData } from 'ethereumjs-tx';
 import { fromWei, padLeft, toHex, toWei } from 'web3-utils';
-import { ERC20_TRANSFER } from '@wallet-constants/sendForm';
+import { ERC20_TRANSFER, DEFAULT_PAYMENT, DEFAULT_VALUES } from '@wallet-constants/sendForm';
 import {
     amountToSatoshi,
     networkAmountToSatoshi,
     formatNetworkAmount,
 } from '@wallet-utils/accountUtils';
 import { Network, Account, CoinFiatRates } from '@wallet-types';
-import { FormState, FeeInfo, EthTransactionData, ExternalOutput } from '@wallet-types/sendForm';
+import {
+    FormState,
+    FeeInfo,
+    EthTransactionData,
+    ExternalOutput,
+    Output,
+} from '@wallet-types/sendForm';
 
 export const calculateTotal = (amount: string, fee: string): string => {
     try {
@@ -340,5 +346,29 @@ export const getExternalComposeOutput = (
         output,
         tokenInfo,
         decimals,
+    };
+};
+
+export const getDefaultValues = (
+    currency: Output['currency'],
+    address: Output['address'] = DEFAULT_PAYMENT.address,
+    amount: Output['amount'] = DEFAULT_PAYMENT.amount,
+): FormState => {
+    return {
+        ...DEFAULT_VALUES,
+        // TEMP: rbf option is disabled by default
+        // options:
+        //     isFeatureEnabled('RBF') && network.features?.includes('rbf')
+        //         ? ['bitcoinRBF', 'broadcast']
+        //         : ['broadcast'],
+        options: ['broadcast'],
+        outputs: [
+            {
+                ...DEFAULT_PAYMENT,
+                currency,
+                address,
+                amount,
+            },
+        ],
     };
 };
