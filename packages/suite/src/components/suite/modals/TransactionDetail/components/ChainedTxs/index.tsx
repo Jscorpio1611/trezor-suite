@@ -21,6 +21,7 @@ const ChainedTxs = ({ txs }: Props) => (
                 isPending
                 isActionDisabled
                 accountKey={`${tx.descriptor}-${tx.symbol}-${tx.deviceState}`}
+                chainedTxMode
             />
         ))}
     </Wrapper>

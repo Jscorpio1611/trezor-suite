@@ -1,6 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { AnimatePresence } from 'framer-motion';
 import { variables, Button } from '@trezor/components';
 import { Translation, HiddenPlaceholder } from '@suite-components';
@@ -17,13 +17,26 @@ import { MIN_ROW_HEIGHT } from './components/BaseTargetLayout';
 import { Target, TokenTransfer, FeeRow } from './components/Target';
 import TransactionTimestamp from './components/TransactionTimestamp';
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<Pick<Props, 'chainedTxMode'>>`
     display: flex;
     flex-direction: row;
     padding: 12px 0px;
-    & + & {
-        border-top: 1px solid ${props => props.theme.STROKE_GREY};
-    }
+
+    ${props =>
+        props.chainedTxMode
+            ? css`
+                  padding: 12px 16px;
+                  cursor: pointer;
+                  &:hover {
+                      border-radius: 6px;
+                      background: ${props => props.theme.BG_GREY};
+                  }
+              `
+            : css`
+                  & + & {
+                      border-top: 1px solid ${props => props.theme.STROKE_GREY};
+                  }
+              `}
 `;
 
 const TxTypeIconWrapper = styled.div`
@@ -96,6 +109,7 @@ interface Props {
     isActionDisabled?: boolean;
     accountMetadata?: AccountMetadata;
     accountKey: string;
+    chainedTxMode?: boolean; // Used in "chained transactions" transaction detail modal
 }
 
 const TransactionItem = React.memo((props: Props) => {
@@ -140,6 +154,8 @@ const TransactionItem = React.memo((props: Props) => {
         <Wrapper
             onMouseEnter={() => setTxItemIsHovered(true)}
             onMouseLeave={() => setTxItemIsHovered(false)}
+            onClick={props.chainedTxMode ? () => openTxDetailsModal() : undefined}
+            chainedTxMode={props.chainedTxMode}
         >
             <TxTypeIconWrapper
                 onMouseEnter={() => setNestedItemIsHovered(true)}
