@@ -5310,6 +5310,10 @@ const definedMessages = defineMessages({
         id: 'TR_PAGINATION_OLDER',
         defaultMessage: 'Older',
     },
+    TR_NO_CHANGE_OUTPUT: {
+        id: 'TR_NO_CHANGE_OUTPUT',
+        defaultMessage: "This transaction doesn't contain a change output and cannot be replaced.",
+    },
 } as const);
 
 export default definedMessages;

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FormattedDate } from 'react-intl';
-import { Icon, useTheme, variables, Loader } from '@trezor/components';
+import { Icon, useTheme, variables, Loader, CoinLogo } from '@trezor/components';
 import { Translation, HiddenPlaceholder } from '@suite-components';
 import { getDateWithTimeZone } from '@suite-utils/date';
 import { WalletAccountTransaction } from '@wallet-types';
@@ -21,7 +21,8 @@ const TransactionId = styled(props => <HiddenPlaceholder {...props} />)`
 const Confirmations = styled.div`
     display: flex;
     color: ${props => props.theme.TYPE_LIGHT_GREY};
-    font-size: ${variables.FONT_SIZE.TINY};
+    font-size: ${variables.FONT_SIZE.SMALL};
+    font-weight: ${variables.FONT_WEIGHT.MEDIUM};
 `;
 
 const StatusWrapper = styled.div`
@@ -103,8 +104,8 @@ const MainIconWrapper = styled(IconWrapper)`
 `;
 
 const NestedIconWrapper = styled(IconWrapper)`
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     position: absolute;
     top: 0px;
     right: 0px;
@@ -170,20 +171,14 @@ const BasicDetails = ({ tx, confirmations, isFetching }: Props) => {
         <Wrapper>
             <HeaderFirstRow>
                 <MainIconWrapper>
-                    <Icon
-                        size={24}
-                        color={theme.TYPE_LIGHT_GREY}
-                        icon={tx.type === 'recv' ? 'RECEIVE' : 'SEND'}
-                    />
-                    {!isFetching && (
-                        <NestedIconWrapper>
-                            <Icon
-                                size={12}
-                                color={isConfirmed ? theme.BG_GREEN : theme.TYPE_ORANGE}
-                                icon={isConfirmed ? 'CHECK' : 'CLOCK'}
-                            />
-                        </NestedIconWrapper>
-                    )}
+                    <CoinLogo symbol={tx.symbol} size={48} />
+                    <NestedIconWrapper>
+                        <Icon
+                            size={14}
+                            color={theme.TYPE_DARK_GREY}
+                            icon={tx.type === 'recv' ? 'RECEIVE' : 'SEND'}
+                        />
+                    </NestedIconWrapper>
                 </MainIconWrapper>
                 <TxStatus>
                     <TxSentStatus>

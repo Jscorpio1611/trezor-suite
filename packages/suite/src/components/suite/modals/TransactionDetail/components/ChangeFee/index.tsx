@@ -10,13 +10,13 @@ import NoChange from './components/NoChange';
 import ReplaceButton from './components/ReplaceButton';
 
 const Wrapper = styled.div`
-    padding: 24px 0 14px;
+    margin: 12px 0;
 `;
 
 const Box = styled.div`
     display: flex;
     flex-direction: column;
-    padding: 22px 20px 20px 27px;
+    padding: 18px 26px;
     border: 1px solid ${props => props.theme.STROKE_GREY};
     border-radius: 6px;
 `;
