@@ -312,7 +312,7 @@ export const getRbfParams = (
     account: Account,
 ): RbfTransactionParams | undefined => {
     if (account.networkType !== 'bitcoin') return;
-    if (tx.type === 'recv' || !tx.rbf || !tx.details || !isPending(tx)) return; // ignore non rbf and mined transactions
+    if (tx.type === 'recv' || !tx.rbf || !tx.details /*|| !isPending(tx)*/) return; // ignore non rbf and mined transactions
     const { vin, vout } = tx.details;
 
     const changeAddresses = account.addresses ? account.addresses.change : [];

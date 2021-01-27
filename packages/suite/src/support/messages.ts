@@ -1187,6 +1187,11 @@ const definedMessages = defineMessages({
         description: 'Message to show after user clicks download bridge.',
         id: 'TR_DETECTING_BRIDGE',
     },
+    TR_DETAIL: {
+        defaultMessage: 'Detail',
+        description: 'Button in modal',
+        id: 'TR_DETAIL',
+    },
     TR_DEVICE: {
         defaultMessage: 'Device',
         description: 'Category in Settings',
@@ -2413,6 +2418,10 @@ const definedMessages = defineMessages({
     TR_TOS_LINK: {
         defaultMessage: 'Terms & Conditions.',
         id: 'TR_TOS_LINK',
+    },
+    TR_TOTAL: {
+        defaultMessage: 'Total',
+        id: 'TR_TOTAL',
     },
     TR_TOTAL_INPUT: {
         defaultMessage: 'Total Input',
@@ -5207,6 +5216,10 @@ const definedMessages = defineMessages({
         id: 'TR_RANGE',
         defaultMessage: 'range',
     },
+    TR_DELIVERY: {
+        id: 'TR_DELIVERY',
+        defaultMessage: 'Delivery',
+    },
     TR_BUMP_FEE: {
         id: 'TR_BUMP_FEE',
         defaultMessage: 'Bump fee',
@@ -5222,6 +5235,10 @@ const definedMessages = defineMessages({
     TR_CURRENT_FEE: {
         id: 'TR_CURRENT_FEE',
         defaultMessage: 'Current',
+    },
+    TR_SENT_SUCCESSFULLY: {
+        id: 'TR_SENT_SUCCESSFULLY',
+        defaultMessage: 'Sent successfully',
     },
     TR_NEW_FEE: {
         id: 'TR_NEW_FEE',
@@ -5333,6 +5350,14 @@ const definedMessages = defineMessages({
     TR_TXID: {
         id: 'TR_TXID',
         defaultMessage: 'TX ID',
+    },
+    TR_SIZE: {
+        id: 'TR_SIZE',
+        defaultMessage: 'Size',
+    },
+    TR_BYTES: {
+        id: 'TR_BYTES',
+        defaultMessage: 'bytes',
     },
 } as const);
 
