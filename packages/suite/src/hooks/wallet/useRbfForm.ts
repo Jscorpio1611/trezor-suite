@@ -3,14 +3,19 @@ import { useForm } from 'react-hook-form';
 import { FormState } from '@wallet-types/sendForm';
 import { useSelector } from '@suite-hooks';
 import { getFeeLevels } from '@wallet-utils/sendFormUtils';
-import { findChainedTransactions } from '@wallet-utils/transactionUtils';
 import { networkAmountToSatoshi } from '@wallet-utils/accountUtils';
 import { DEFAULT_PAYMENT, DEFAULT_VALUES } from '@wallet-constants/sendForm';
 import { WalletAccountTransaction } from '@wallet-types';
 import { useFees } from './form/useFees';
 import { useCompose } from './form/useCompose';
 
-const useRbfState = (tx: WalletAccountTransaction, finalize: boolean, currentState: boolean) => {
+export type Props = {
+    tx: WalletAccountTransaction;
+    finalize: boolean;
+    chainedTxs: WalletAccountTransaction[];
+};
+
+const useRbfState = ({ tx, finalize, chainedTxs }: Props, currentState: boolean) => {
     const state = useSelector(state => ({
         selectedAccount: state.wallet.selectedAccount,
         fees: state.wallet.fees,
@@ -59,16 +64,11 @@ const useRbfState = (tx: WalletAccountTransaction, finalize: boolean, currentSta
         ];
     });
 
-    // find chained transactions for current account
-    const chainedTxs = findChainedTransactions(tx.txid, state.transactions).find(
-        t => t.key === account.key,
-    );
-
     let { baseFee } = tx.rbfParams;
-    if (chainedTxs) {
+    if (chainedTxs.length > 0) {
         // increase baseFee, pay for all child chained transactions
-        baseFee = chainedTxs.txs.reduce((f, ctx) => {
-            // transformation to satoshi should not be here, addressed in another PR
+        baseFee = chainedTxs.reduce((f, ctx) => {
+            // TODO: transformation to satoshi should not be here, refactor of "enhanceTransaction" required
             const fee = networkAmountToSatoshi(ctx.fee, account.symbol);
             return f + parseInt(fee, 10);
         }, baseFee);
@@ -100,12 +100,12 @@ const useRbfState = (tx: WalletAccountTransaction, finalize: boolean, currentSta
     };
 };
 
-export const useRbf = (tx: WalletAccountTransaction, finalize: boolean) => {
+export const useRbf = (props: Props) => {
     // local state
     const [state, setState] = useState<ReturnType<typeof useRbfState>>(undefined);
 
     // throttle state calculation
-    const initState = useRbfState(tx, finalize, !!state);
+    const initState = useRbfState(props, !!state);
     useEffect(() => {
         if (!state && initState) {
             setState(initState);
@@ -150,6 +150,7 @@ export const useRbf = (tx: WalletAccountTransaction, finalize: boolean) => {
     });
 
     // handle `finalize` change
+    const { finalize } = props;
     useEffect(() => {
         const rbfEnabled = (getValues('options') || []).includes('bitcoinRBF');
         if (finalize === rbfEnabled) {
