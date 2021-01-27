@@ -4888,6 +4888,18 @@ const definedMessages = defineMessages({
         id: 'TR_INPUTS_OUTPUTS',
         defaultMessage: 'Inputs, Outputs',
     },
+    TR_CHAINED_TXS: {
+        id: 'TR_CHAINED_TXS',
+        defaultMessage: 'Chained transactions',
+    },
+    TR_CHAINED_TXS_HEADER: {
+        id: 'TR_CHAINED_TXS_HEADER',
+        defaultMessage: 'Chained pending transactions',
+    },
+    TR_AFFECTED_TXS: {
+        id: 'TR_AFFECTED_TXS',
+        defaultMessage: 'This operation will remove following transactions from the mempool:',
+    },
     TR_OUTPUTS: {
         id: 'TR_OUTPUTS',
         defaultMessage: 'Outputs',

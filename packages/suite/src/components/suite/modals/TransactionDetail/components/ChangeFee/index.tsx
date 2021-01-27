@@ -2,8 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { variables } from '@trezor/components';
 import { Translation, FiatValue, FormattedCryptoAmount } from '@suite-components';
-import { WalletAccountTransaction } from '@wallet-types';
-import { useRbf, RbfContext } from '@wallet-hooks/useRbfForm';
+import { useRbf, RbfContext, Props } from '@wallet-hooks/useRbfForm';
 import { getFeeUnits } from '@wallet-utils/sendFormUtils';
 import Fees from './components/Fees';
 import AffectedTransactions from './components/AffectedTransactions';
@@ -75,30 +74,15 @@ const StyledFiatValue = styled.div`
     color: ${props => props.theme.TYPE_LIGHT_GREY};
 `;
 
-interface Props {
-    tx: WalletAccountTransaction;
-    finalize: boolean;
-}
-
-const ChangeFee = ({ tx, finalize }: Props) => {
-    const contextValues = useRbf(tx, finalize);
+const ChangeFee = (props: Props & { showChained: () => void }) => {
+    const contextValues = useRbf(props);
     if (!contextValues.account) return null; // context without account, should never happen
+    const { tx } = props;
 
     return (
         <RbfContext.Provider value={contextValues}>
             <Wrapper>
                 <Box>
-                    {contextValues.chainedTxs && (
-                        <Inner>
-                            <AffectedTransactions />
-                        </Inner>
-                    )}
-                    {!tx.rbfParams?.changeAddress && (
-                        <Inner>
-                            <NoChange />
-                        </Inner>
-                    )}
-
                     <Inner>
                         <Title>
                             <Translation id="TR_CURRENT_FEE" />
@@ -134,8 +118,12 @@ const ChangeFee = ({ tx, finalize }: Props) => {
                             <Fees />
                         </Content>
                     </Inner>
+                    {contextValues.chainedTxs && (
+                        <AffectedTransactions showChained={props.showChained} />
+                    )}
+                    {!tx.rbfParams?.changeAddress && <NoChange />}
                 </Box>
-                <ReplaceButton finalize={finalize} />
+                <ReplaceButton finalize={props.finalize} />
             </Wrapper>
         </RbfContext.Provider>
     );

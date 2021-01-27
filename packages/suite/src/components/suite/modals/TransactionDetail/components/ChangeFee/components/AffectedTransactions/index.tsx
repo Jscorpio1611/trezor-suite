@@ -1,11 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Icon, useTheme } from '@trezor/components';
+import { Icon, Button, useTheme } from '@trezor/components';
+import { Translation } from '@suite-components';
 import { useRbfContext } from '@wallet-hooks/useRbfForm';
 
 const Wrapper = styled.div`
     display: block;
     text-align: left;
+    background-color: red;
+    border-radius: 6px;
 `;
 
 const Inner = styled.div`
@@ -16,15 +19,21 @@ const Amount = styled.div`
     display: flex;
 `;
 
-const AffectedTransactions = () => {
+const AffectedTransactions = ({ showChained }: { showChained: () => void }) => {
     const theme = useTheme();
     const { network, chainedTxs } = useRbfContext();
     if (!chainedTxs) return null;
 
     return (
         <Wrapper>
-            <div>This operation will remove following transactions from the mempool:</div>
-            {chainedTxs.txs.map(tx => (
+            <div>
+                <Translation id="TR_AFFECTED_TXS" />
+                <Button variant="tertiary" onClick={showChained}>
+                    <Translation id="TR_SEE_DETAILS" />
+                </Button>
+            </div>
+
+            {chainedTxs.map(tx => (
                 <Inner key={tx.txid}>
                     <Icon
                         size={18}
