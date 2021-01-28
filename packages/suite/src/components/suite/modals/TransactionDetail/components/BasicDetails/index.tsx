@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FormattedDate } from 'react-intl';
-import { Icon, useTheme, variables, Loader, CoinLogo } from '@trezor/components';
-import { Translation, HiddenPlaceholder, ExternalLink } from '@suite-components';
+import { Icon, useTheme, variables, Loader, CoinLogo, Tooltip } from '@trezor/components';
+import { Translation, HiddenPlaceholder, TrezorLink } from '@suite-components';
 import { getDateWithTimeZone } from '@suite-utils/date';
 import { WalletAccountTransaction, Network } from '@wallet-types';
 import { getFeeRate } from '@wallet-utils/transactionUtils';
@@ -83,6 +83,7 @@ const Title = styled.div`
 `;
 
 const Value = styled.div`
+    display: inline-flex;
     color: ${props => props.theme.TYPE_DARK_GREY};
     font-size: ${variables.FONT_SIZE.TINY};
     overflow: hidden;
@@ -161,9 +162,8 @@ const Timestamp = styled.span`
 const StyledIcon = styled(Icon)`
     margin-right: 6px;
 `;
-
-const ExplorerLink = styled(ExternalLink)`
-    width: 100%; /* makes text overflow elipsis work */
+const LinkIcon = styled(Icon)`
+    margin-left: 6px;
 `;
 
 interface Props {
@@ -287,9 +287,12 @@ const BasicDetails = ({ tx, confirmations, network, explorerUrl, isFetching }: P
                     <Translation id="TR_TXID" />
                 </Title>
                 <Value>
-                    <ExplorerLink size="tiny" variant="nostyle" href={explorerUrl}>
-                        <TransactionId>{tx.txid}</TransactionId>
-                    </ExplorerLink>
+                    <TransactionId>{tx.txid}</TransactionId>
+                    <TrezorLink size="tiny" variant="nostyle" href={explorerUrl}>
+                        <Tooltip content={<Translation id="TR_OPEN_IN_BLOCK_EXPLORER" />}>
+                            <LinkIcon size={12} color={theme.TYPE_DARK_GREY} icon="EXTERNAL_LINK" />
+                        </Tooltip>
+                    </TrezorLink>
                 </Value>
 
                 {network.networkType === 'bitcoin' && (
