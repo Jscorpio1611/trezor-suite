@@ -13,6 +13,7 @@ const Wrapper = styled.div`
     display: flex;
     width: 100%;
     border-top: 1px solid ${props => props.theme.STROKE_GREY};
+    margin-top: 20px;
     padding-top: 20px;
 
     @media all and (max-width: ${variables.SCREEN_SIZE.LG}) {
