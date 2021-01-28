@@ -143,6 +143,16 @@ const Fees = (props: Props) => {
             </Label>
         ) : null;
 
+    const selectBarComponent = (
+        <SelectBarWrapper desktop={isDesktopLayout}>
+            <SelectBar
+                selectedOption={selectedOption}
+                options={feeOptions}
+                onChange={changeFeeLevel}
+            />
+        </SelectBarWrapper>
+    );
+
     return (
         <FeesWrapper desktop={isDesktopLayout}>
             {/* Only 2 components are changing positions based on layout, Label and SelectBar */}
@@ -150,15 +160,7 @@ const Fees = (props: Props) => {
             <FeeSetupWrapper>
                 <Row>
                     {!isDesktopLayout && labelComponent}
-                    {isDesktopLayout && (
-                        <SelectBarWrapper desktop>
-                            <SelectBar
-                                selectedOption={selectedOption}
-                                options={feeOptions}
-                                onChange={changeFeeLevel}
-                            />
-                        </SelectBarWrapper>
-                    )}
+                    {isDesktopLayout && selectBarComponent}
 
                     {transactionInfo !== undefined && transactionInfo.type !== 'error' && (
                         <FeeAmount>
@@ -184,15 +186,7 @@ const Fees = (props: Props) => {
                         </FeeError>
                     )}
                 </Row>
-                {!isDesktopLayout && (
-                    <SelectBarWrapper>
-                        <SelectBar
-                            selectedOption={selectedOption}
-                            options={feeOptions}
-                            onChange={changeFeeLevel}
-                        />
-                    </SelectBarWrapper>
-                )}
+                {!isDesktopLayout && selectBarComponent}
                 <FeeInfoWrapper>
                     <AnimatePresence initial={false}>
                         {isCustomLevel ? (
