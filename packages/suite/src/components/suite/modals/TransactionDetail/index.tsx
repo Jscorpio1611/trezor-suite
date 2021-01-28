@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Translation, Modal, TrezorLink } from '@suite-components';
+import { Translation, Modal } from '@suite-components';
 import { variables, Button } from '@trezor/components';
 import { OnOffSwitcher } from '@wallet-components';
 import { WalletAccountTransaction } from '@wallet-types';
@@ -66,8 +66,8 @@ const TransactionDetail = (props: Props) => {
         : [];
 
     const network = getNetwork(tx.symbol);
-    const explorerBaseUrl = network?.explorer.tx;
-    const explorerUrl = explorerBaseUrl ? `${explorerBaseUrl}${tx.txid}` : undefined;
+
+    const explorerUrl = `${network!.explorer.tx}${tx.txid}`;
 
     // txDetails stores response from blockchainGetTransactions()
     const [txDetails, setTxDetails] = useState<any>(null);
@@ -106,7 +106,13 @@ const TransactionDetail = (props: Props) => {
             heading={<Translation id="TR_TRANSACTION_DETAILS" />}
         >
             <Wrapper>
-                <BasicDetails tx={tx} isFetching={isFetching} confirmations={confirmations} />
+                <BasicDetails
+                    tx={tx}
+                    explorerUrl={explorerUrl}
+                    network={network!}
+                    isFetching={isFetching}
+                    confirmations={confirmations}
+                />
                 <SectionActions>
                     {section === 'CHANGE_FEE' && (
                         <SectionTitle>
@@ -128,7 +134,6 @@ const TransactionDetail = (props: Props) => {
                             )}
                             <Button
                                 variant="tertiary"
-                                icon="RBF"
                                 onClick={() => {
                                     setFinalize(!finalize);
                                     if (section !== 'CHANGE_FEE') {
@@ -153,13 +158,6 @@ const TransactionDetail = (props: Props) => {
                                 </Button>
                             )}
                         </>
-                    )}
-                    {explorerUrl && section === 'DETAILS' && (
-                        <TrezorLink variant="nostyle" href={explorerUrl}>
-                            <Button variant="tertiary" icon="EXTERNAL_LINK" alignIcon="right">
-                                <Translation id="TR_OPEN_IN_BLOCK_EXPLORER" />
-                            </Button>
-                        </TrezorLink>
                     )}
                 </SectionActions>
                 {section === 'CHANGE_FEE' ? (

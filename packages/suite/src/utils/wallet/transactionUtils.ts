@@ -301,6 +301,10 @@ export const isTxUnknown = (transaction: WalletAccountTransaction) => {
     );
 };
 
+export const getFeeRate = (tx: AccountTransaction) =>
+    // calculate fee rate, TODO: add this to blockchain-link tx details
+    new BigNumber(tx.fee).div(tx.details.size).integerValue(BigNumber.ROUND_CEIL).toString();
+
 export const getRbfParams = (
     tx: AccountTransaction,
     account: Account,
@@ -350,10 +354,7 @@ export const getRbfParams = (
     if (!utxo.length || !outputs.length) return;
 
     // calculate fee rate, TODO: add this to blockchain-link tx details
-    const feeRate = new BigNumber(tx.fee)
-        .div(tx.details.size)
-        .integerValue(BigNumber.ROUND_CEIL)
-        .toString();
+    const feeRate = getFeeRate(tx);
 
     // TODO: get other params, like opreturn or locktime? change etc.
     return {

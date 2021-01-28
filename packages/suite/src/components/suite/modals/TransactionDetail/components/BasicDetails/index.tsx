@@ -2,9 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 import { FormattedDate } from 'react-intl';
 import { Icon, useTheme, variables, Loader, CoinLogo } from '@trezor/components';
-import { Translation, HiddenPlaceholder } from '@suite-components';
+import { Translation, HiddenPlaceholder, ExternalLink } from '@suite-components';
 import { getDateWithTimeZone } from '@suite-utils/date';
-import { WalletAccountTransaction } from '@wallet-types';
+import { WalletAccountTransaction, Network } from '@wallet-types';
+import { getFeeRate } from '@wallet-utils/transactionUtils';
+import { getFeeUnits } from '@wallet-utils/sendFormUtils';
 
 const Wrapper = styled.div`
     background-color: ${props => props.theme.BG_GREY};
@@ -33,9 +35,7 @@ const StatusWrapper = styled.div`
 
 const HourWrapper = styled.div`
     display: inline-flex;
-    padding-left: 8px;
-    margin-left: 8px;
-    border-left: 1px solid ${props => props.theme.STROKE_GREY};
+    color: ${props => props.theme.TYPE_LIGHT_GREY};
 `;
 
 const LoaderIconWrapper = styled.div`
@@ -59,29 +59,35 @@ const HeaderFirstRow = styled.div`
     }
 `;
 
-const HeaderSecondRow = styled.div`
+const Grid = styled.div`
     display: grid;
+    border-top: 1px solid ${props => props.theme.STROKE_GREY};
     grid-gap: 10px;
-    grid-template-columns: 140px 1fr;
+    grid-template-columns: 100px 2fr 100px 3fr; /* title value title value */
     font-size: ${variables.NEUE_FONT_SIZE.SMALL};
     font-weight: ${variables.FONT_WEIGHT.MEDIUM};
     padding: 28px 6px 10px 6px;
     text-align: left;
 
-    @media only screen and (max-width: ${variables.SCREEN_SIZE.SM}) {
+    @media only screen and (max-width: ${variables.SCREEN_SIZE.MD}) {
         grid-template-columns: 110px 1fr;
     }
 `;
 
-const SecondRowTitle = styled.div`
+const Title = styled.div`
+    display: inline-flex;
     text-align: left;
+    font-size: ${variables.FONT_SIZE.TINY};
     color: ${props => props.theme.TYPE_LIGHT_GREY};
+    align-items: center;
 `;
 
-const SecondRowValue = styled.div`
+const Value = styled.div`
     color: ${props => props.theme.TYPE_DARK_GREY};
+    font-size: ${variables.FONT_SIZE.TINY};
     overflow: hidden;
     text-overflow: ellipsis;
+    font-variant-numeric: tabular-nums;
 `;
 
 const IconWrapper = styled.div`
@@ -128,10 +134,12 @@ const TxSentStatus = styled.div`
     font-weight: ${variables.FONT_WEIGHT.MEDIUM};
 `;
 
-const ConfirmationStatus = styled.div<{ confirmed: boolean }>`
+const ConfirmationStatus = styled.div<{ confirmed: boolean; tiny?: boolean }>`
     color: ${props => (props.confirmed ? props.theme.TYPE_GREEN : props.theme.TYPE_ORANGE)};
-    font-weight: ${variables.FONT_WEIGHT.DEMI_BOLD};
-    font-size: ${variables.NEUE_FONT_SIZE.SMALL};
+    font-weight: ${props =>
+        props.tiny ? variables.FONT_WEIGHT.MEDIUM : variables.FONT_WEIGHT.DEMI_BOLD};
+    font-size: ${props =>
+        props.tiny ? variables.NEUE_FONT_SIZE.TINY : variables.NEUE_FONT_SIZE.SMALL};
 `;
 
 const Circle = styled.div`
@@ -140,8 +148,28 @@ const Circle = styled.div`
     color: ${props => props.theme.TYPE_LIGHT_GREY};
 `;
 
+const Bullet = styled.span`
+    margin-left: 0.5ch;
+    margin-right: 0.5ch;
+    color: ${props => props.theme.TYPE_LIGHT_GREY};
+`;
+
+const Timestamp = styled.span`
+    white-space: nowrap;
+`;
+
+const StyledIcon = styled(Icon)`
+    margin-right: 6px;
+`;
+
+const ExplorerLink = styled(ExternalLink)`
+    width: 100%; /* makes text overflow elipsis work */
+`;
+
 interface Props {
     tx: WalletAccountTransaction;
+    network: Network;
+    explorerUrl: string;
     isFetching: boolean;
     confirmations: number;
 }
@@ -161,7 +189,7 @@ const getHumanReadableTxType = (tx: WalletAccountTransaction) => {
     }
 };
 
-const BasicDetails = ({ tx, confirmations, isFetching }: Props) => {
+const BasicDetails = ({ tx, confirmations, network, explorerUrl, isFetching }: Props) => {
     const theme = useTheme();
     const isConfirmed = confirmations > 0;
     const transactionStatus = getHumanReadableTxType(tx);
@@ -220,24 +248,27 @@ const BasicDetails = ({ tx, confirmations, isFetching }: Props) => {
                 </ConfirmationStatusWrapper>
             </HeaderFirstRow>
 
-            <HeaderSecondRow>
-                {/* FIRST ROW - MINED TIME */}
-                <SecondRowTitle>
+            <Grid>
+                {/* MINED TIME */}
+                <Title>
+                    <StyledIcon icon="CALENDAR" size={10} />
                     {isConfirmed ? (
                         <Translation id="TR_MINED_TIME" />
                     ) : (
                         <Translation id="TR_FIRST_SEEN" />
                     )}
-                </SecondRowTitle>
-                <SecondRowValue>
+                </Title>
+                <Value>
                     {tx.blockTime ? (
-                        <>
+                        <Timestamp>
                             <FormattedDate
                                 value={getDateWithTimeZone(tx.blockTime * 1000)}
                                 year="numeric"
                                 month="short"
                                 day="2-digit"
                             />
+
+                            <Bullet>&bull;</Bullet>
                             <HourWrapper>
                                 <FormattedDate
                                     value={getDateWithTimeZone(tx.blockTime * 1000)}
@@ -245,21 +276,45 @@ const BasicDetails = ({ tx, confirmations, isFetching }: Props) => {
                                     minute="2-digit"
                                 />
                             </HourWrapper>
-                        </>
+                        </Timestamp>
                     ) : (
                         <Translation id="TR_UNKNOWN_CONFIRMATION_TIME" />
                     )}
-                </SecondRowValue>
+                </Value>
 
-                {/* SECOND ROW - TX ID */}
-                <SecondRowTitle>
-                    <Translation id="TR_TRANSACTION_ID" />
-                </SecondRowTitle>
+                {/* TX ID */}
+                <Title>
+                    <Translation id="TR_TXID" />
+                </Title>
+                <Value>
+                    <ExplorerLink size="tiny" variant="nostyle" href={explorerUrl}>
+                        <TransactionId>{tx.txid}</TransactionId>
+                    </ExplorerLink>
+                </Value>
 
-                <SecondRowValue>
-                    <TransactionId>{tx.txid}</TransactionId>{' '}
-                </SecondRowValue>
-            </HeaderSecondRow>
+                {network.networkType === 'bitcoin' && (
+                    <>
+                        {/* Fee level */}
+                        <Title>
+                            <StyledIcon icon="GAS" size={10} />
+                            <Translation id="TR_FEE_LEVEL" />
+                        </Title>
+                        <Value>{`${getFeeRate(tx)} ${getFeeUnits('bitcoin')}`}</Value>
+
+                        {/* RBF Status */}
+                        <Title>
+                            <Translation id="TR_RBF_STATUS" />
+                        </Title>
+                        <Value>
+                            <ConfirmationStatus confirmed={!tx.rbf} tiny>
+                                <Translation
+                                    id={tx.rbf ? 'TR_RBF_STATUS_NOT_FINAL' : 'TR_RBF_STATUS_FINAL'}
+                                />
+                            </ConfirmationStatus>
+                        </Value>
+                    </>
+                )}
+            </Grid>
         </Wrapper>
     );
 };

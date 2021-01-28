@@ -4898,7 +4898,7 @@ const definedMessages = defineMessages({
     },
     TR_AFFECTED_TXS: {
         id: 'TR_AFFECTED_TXS',
-        defaultMessage: 'This operation will remove following transactions from the mempool:',
+        defaultMessage: 'This operation will remove following transactions from the mempool',
     },
     TR_OUTPUTS: {
         id: 'TR_OUTPUTS',
@@ -5313,6 +5313,26 @@ const definedMessages = defineMessages({
     TR_NO_CHANGE_OUTPUT: {
         id: 'TR_NO_CHANGE_OUTPUT',
         defaultMessage: "This transaction doesn't contain a change output and cannot be replaced.",
+    },
+    TR_RBF_STATUS: {
+        id: 'TR_RBF_STATUS',
+        defaultMessage: 'Status',
+    },
+    TR_RBF_STATUS_FINAL: {
+        id: 'TR_RBF_STATUS_FINAL',
+        defaultMessage: 'Final',
+    },
+    TR_RBF_STATUS_NOT_FINAL: {
+        id: 'TR_RBF_STATUS_NOT_FINAL',
+        defaultMessage: 'Not Final',
+    },
+    TR_FEE_LEVEL: {
+        id: 'TR_FEE_LEVEL',
+        defaultMessage: 'Fee Level',
+    },
+    TR_TXID: {
+        id: 'TR_TXID',
+        defaultMessage: 'TX ID',
     },
 } as const);
 
