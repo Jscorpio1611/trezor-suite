@@ -26,6 +26,7 @@ const RbfFees = () => {
             composedLevels={composedLevels}
             changeFeeLevel={changeFeeLevel}
             label="TR_NEW_FEE"
+            rbfForm
         />
     );
 };
