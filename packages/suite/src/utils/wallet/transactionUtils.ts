@@ -4,7 +4,7 @@ import { Account, WalletAccountTransaction, RbfTransactionParams } from '@wallet
 import { AccountMetadata } from '@suite-types/metadata';
 import { getDateWithTimeZone } from '../suite/date';
 import { toFiatCurrency } from './fiatConverterUtils';
-import { formatAmount, formatNetworkAmount } from './accountUtils';
+import { formatAmount, formatNetworkAmount, amountToSatoshi } from './accountUtils';
 
 export const sortByBlockHeight = (a: WalletAccountTransaction, b: WalletAccountTransaction) => {
     // if both are missing the blockHeight don't change their order
@@ -301,9 +301,11 @@ export const isTxUnknown = (transaction: WalletAccountTransaction) => {
     );
 };
 
-export const getFeeRate = (tx: AccountTransaction) =>
+export const getFeeRate = (tx: AccountTransaction, convertToDecimals?: number) => {
     // calculate fee rate, TODO: add this to blockchain-link tx details
-    new BigNumber(tx.fee).div(tx.details.size).integerValue(BigNumber.ROUND_CEIL).toString();
+    const fee = convertToDecimals ? amountToSatoshi(tx.fee, convertToDecimals) : tx.fee;
+    return new BigNumber(fee).div(tx.details.size).integerValue(BigNumber.ROUND_CEIL).toString();
+};
 
 export const getRbfParams = (
     tx: AccountTransaction,

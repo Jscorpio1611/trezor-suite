@@ -302,7 +302,9 @@ const BasicDetails = ({ tx, confirmations, network, explorerUrl, isFetching }: P
                             <StyledIcon icon="GAS" size={10} />
                             <Translation id="TR_FEE_LEVEL" />
                         </Title>
-                        <Value>{`${getFeeRate(tx)} ${getFeeUnits('bitcoin')}`}</Value>
+                        <Value>{`${getFeeRate(tx, network.decimals)} ${getFeeUnits(
+                            'bitcoin',
+                        )}`}</Value>
 
                         {/* RBF Status */}
                         <Title>
