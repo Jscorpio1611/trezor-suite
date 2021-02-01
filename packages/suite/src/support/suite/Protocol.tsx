@@ -104,7 +104,7 @@ const Protocol = () => {
         if (isWeb()) {
             navigator.registerProtocolHandler(
                 'bitcoin',
-                `${window.location.origin}?uri=%s`,
+                `${window.location.origin}${process.env.assetPrefix ?? ''}?uri=%s`,
                 'Bitcoin / Trezor Suite',
             );
         }

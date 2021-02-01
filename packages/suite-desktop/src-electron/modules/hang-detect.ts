@@ -7,9 +7,9 @@ const HANG_WAIT = 30000;
 const init = ({ mainWindow }: Dependencies) => {
     const { logger } = global;
 
-    let hasContent = false;
+    let isReady = false;
     const hangHandler = async () => {
-        if (hasContent) {
+        if (isReady) {
             return;
         }
 
@@ -33,12 +33,7 @@ const init = ({ mainWindow }: Dependencies) => {
                 break;
             // Clear cache & restart
             case 2: {
-                if (!process.env.PKGNAME) {
-                    logger.error('hang-detect', 'PKGNAME not defined');
-                    break;
-                }
-
-                const appFolder = process.env.PKGNAME.replace('/', path.sep);
+                const appFolder = PKG.NAME.replace('/', path.sep);
                 const cachePath = path.join(app.getPath('appData'), appFolder, 'Cache');
 
                 logger.info('hang-detect', `Deleting cache at ${cachePath}`);
@@ -60,7 +55,7 @@ const init = ({ mainWindow }: Dependencies) => {
 
     ipcMain.on('client/ready', () => {
         logger.debug('hang-detect', 'Client ready');
-        hasContent = true;
+        isReady = true;
     });
 };
 

@@ -29,8 +29,8 @@ build({
     outdir: path.join(__dirname, '..', 'dist'),
     define: {
         'process.env.COMMITHASH': JSON.stringify(gitRevision),
-        'process.env.PROTOCOLS': JSON.stringify(pkg.build.protocols.schemes),
-        'process.env.PKGNAME': JSON.stringify(pkg.name),
+        'PKG.PROTOCOLS': JSON.stringify(pkg.build.protocols.schemes),
+        'PKG.NAME': JSON.stringify(pkg.name),
     },
 })
     .then(() => {

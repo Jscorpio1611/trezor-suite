@@ -7,14 +7,7 @@ import { isValidProtocol } from '@lib/protocol';
 const init = ({ mainWindow }: Dependencies) => {
     const { logger } = global;
 
-    if (!process.env.PROTOCOLS) {
-        logger.warn('custom-protocols', 'No protocols defined');
-        return;
-    }
-
-    // For some reason, PROTOCOLS is an array of strings but is considered as a string by TS...
-    const protocols = (process.env.PROTOCOLS as unknown) as string[];
-    protocols.forEach((p: string) => app.setAsDefaultProtocolClient(p));
+    PKG.PROTOCOLS.forEach((p: string) => app.setAsDefaultProtocolClient(p));
 
     const sendProtocolInfo = (protocol: string) => {
         if (isValidProtocol(protocol)) {
