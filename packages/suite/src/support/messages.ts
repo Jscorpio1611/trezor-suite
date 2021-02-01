@@ -5314,6 +5314,11 @@ const definedMessages = defineMessages({
         id: 'TR_NO_CHANGE_OUTPUT',
         defaultMessage: "This transaction doesn't contain a change output and cannot be replaced.",
     },
+    TR_RBF_COL: {
+        id: 'TR_RBF_COL',
+        defaultMessage: 'RBF',
+        description: 'Titlee of RBF column in transaction details modal',
+    },
     TR_RBF_STATUS: {
         id: 'TR_RBF_STATUS',
         defaultMessage: 'Status',
@@ -5333,6 +5338,10 @@ const definedMessages = defineMessages({
     TR_TXID: {
         id: 'TR_TXID',
         defaultMessage: 'TX ID',
+    },
+    TR_FINALIZE_TS_RBF_OFF_WARN: {
+        id: 'TR_FINALIZE_TS_RBF_OFF_WARN',
+        defaultMessage: 'Finalizing transaction will turn RBF <strong>OFF</strong>',
     },
 } as const);
 

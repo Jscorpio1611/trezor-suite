@@ -3,9 +3,10 @@ import styled from 'styled-components';
 import { FormattedDate } from 'react-intl';
 import { Icon, useTheme, variables, Loader, CoinLogo, Tooltip } from '@trezor/components';
 import { Translation, HiddenPlaceholder, TrezorLink } from '@suite-components';
+import { OnOffSwitcher } from '@wallet-components';
 import { getDateWithTimeZone } from '@suite-utils/date';
 import { WalletAccountTransaction, Network } from '@wallet-types';
-import { getFeeRate } from '@wallet-utils/transactionUtils';
+import { getFeeRate, getBlockExplorerUrl } from '@wallet-utils/transactionUtils';
 import { getFeeUnits } from '@wallet-utils/sendFormUtils';
 
 const Wrapper = styled.div`
@@ -62,8 +63,8 @@ const HeaderFirstRow = styled.div`
 const Grid = styled.div`
     display: grid;
     border-top: 1px solid ${props => props.theme.STROKE_GREY};
-    grid-gap: 10px;
-    grid-template-columns: 100px 2fr 100px 3fr; /* title value title value */
+    grid-gap: 12px;
+    grid-template-columns: 100px 2fr 80px 3fr 40px 30px; /* title value title value */
     font-size: ${variables.NEUE_FONT_SIZE.SMALL};
     font-weight: ${variables.FONT_WEIGHT.MEDIUM};
     padding: 28px 6px 10px 6px;
@@ -89,6 +90,10 @@ const Value = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
     font-variant-numeric: tabular-nums;
+`;
+
+const TxidValue = styled(Value)`
+    padding-right: 32px;
 `;
 
 const IconWrapper = styled.div`
@@ -169,9 +174,9 @@ const LinkIcon = styled(Icon)`
 interface Props {
     tx: WalletAccountTransaction;
     network: Network;
-    explorerUrl: string;
     isFetching: boolean;
     confirmations: number;
+    isRBFon: boolean;
 }
 
 const getHumanReadableTxType = (tx: WalletAccountTransaction) => {
@@ -189,12 +194,13 @@ const getHumanReadableTxType = (tx: WalletAccountTransaction) => {
     }
 };
 
-const BasicDetails = ({ tx, confirmations, network, explorerUrl, isFetching }: Props) => {
+const BasicDetails = ({ tx, confirmations, network, isFetching, isRBFon }: Props) => {
     const theme = useTheme();
     const isConfirmed = confirmations > 0;
     const transactionStatus = getHumanReadableTxType(tx);
     const tokenSymbol = tx.tokens.length > 0 ? tx.tokens[0].symbol : undefined;
     const assetSymbol = tokenSymbol ? tokenSymbol.toUpperCase() : tx.symbol.toUpperCase();
+    const explorerUrl = getBlockExplorerUrl(tx);
     return (
         <Wrapper>
             <HeaderFirstRow>
@@ -286,17 +292,25 @@ const BasicDetails = ({ tx, confirmations, network, explorerUrl, isFetching }: P
                 <Title>
                     <Translation id="TR_TXID" />
                 </Title>
-                <Value>
+                <TxidValue>
                     <TransactionId>{tx.txid}</TransactionId>
                     <TrezorLink size="tiny" variant="nostyle" href={explorerUrl}>
                         <Tooltip content={<Translation id="TR_OPEN_IN_BLOCK_EXPLORER" />}>
                             <LinkIcon size={12} color={theme.TYPE_DARK_GREY} icon="EXTERNAL_LINK" />
                         </Tooltip>
                     </TrezorLink>
-                </Value>
+                </TxidValue>
 
                 {network.networkType === 'bitcoin' && (
                     <>
+                        {/* RBF */}
+                        <Title>
+                            <Translation id="TR_RBF_COL" />
+                        </Title>
+                        <Value>
+                            <OnOffSwitcher isOn={isRBFon} hasEqualSign={false} />
+                        </Value>
+
                         {/* Fee level */}
                         <Title>
                             <StyledIcon icon="GAS" size={10} />

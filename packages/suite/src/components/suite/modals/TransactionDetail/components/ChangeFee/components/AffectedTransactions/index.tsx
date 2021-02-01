@@ -62,7 +62,7 @@ const AffectedTransactions = ({ showChained }: { showChained: () => void }) => {
     const theme = useTheme();
     const { isMobileLayout } = useLayoutSize();
     const { network, chainedTxs } = useRbfContext();
-    if (!chainedTxs) return null;
+    if (chainedTxs.length === 0) return null;
     const shownTxidChars = isMobileLayout ? 4 : 8;
 
     return (

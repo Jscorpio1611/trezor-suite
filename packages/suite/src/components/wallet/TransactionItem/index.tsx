@@ -25,6 +25,7 @@ const Wrapper = styled.div<Pick<Props, 'chainedTxMode'>>`
     ${props =>
         props.chainedTxMode
             ? css`
+                  width: 100%;
                   padding: 12px 16px;
                   cursor: pointer;
                   &:hover {
@@ -154,7 +155,6 @@ const TransactionItem = React.memo((props: Props) => {
         <Wrapper
             onMouseEnter={() => setTxItemIsHovered(true)}
             onMouseLeave={() => setTxItemIsHovered(false)}
-            onClick={props.chainedTxMode ? () => openTxDetailsModal() : undefined}
             chainedTxMode={props.chainedTxMode}
         >
             <TxTypeIconWrapper
