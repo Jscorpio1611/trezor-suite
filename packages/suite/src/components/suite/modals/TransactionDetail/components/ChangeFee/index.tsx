@@ -147,13 +147,15 @@ const ChangeFee = (props: Props & { showChained: () => void }) => {
                     )}
                     {!tx.rbfParams?.changeAddress && <NoChange />}
                 </Box>
-                <FinalizeWarning>
-                    <InfoIcon icon="INFO_ACTIVE" size={16} />
-                    <Translation
-                        id="TR_FINALIZE_TS_RBF_OFF_WARN"
-                        values={{ strong: chunks => <Red>{chunks}</Red> }}
-                    />
-                </FinalizeWarning>
+                {props.finalize && (
+                    <FinalizeWarning>
+                        <InfoIcon icon="INFO_ACTIVE" size={16} />
+                        <Translation
+                            id="TR_FINALIZE_TS_RBF_OFF_WARN"
+                            values={{ strong: chunks => <Red>{chunks}</Red> }}
+                        />
+                    </FinalizeWarning>
+                )}
                 <ReplaceButton finalize={props.finalize} />
             </Wrapper>
         </RbfContext.Provider>
